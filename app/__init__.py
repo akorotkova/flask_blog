@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for
 import config
+from .forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 app.config.from_object(config.DevelopmentConfig)
@@ -28,3 +29,13 @@ def index():
 @app.route('/about')
 def about():
     return render_template('about.html', title='О блогe')
+
+@app.route('/register')
+def register():
+    registration_form = RegistrationForm()
+    return render_template('register.html', title='Регистрация', form=registration_form)
+
+@app.route('/login')
+def login():
+    login_form = LoginForm()
+    return render_template('login.html', title='Вход', form=login_form)
