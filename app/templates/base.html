@@ -35,12 +35,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarToggle">
           <div class="navbar-nav mr-auto">
-            <a class="nav-item nav-link" href="/">Главная</a>
-            <a class="nav-item nav-link" href="/about">О блоге</a>
+            <a class="nav-item nav-link" href="{{ url_for('index') }}">Главная</a>
+            <a class="nav-item nav-link" href="{{ url_for('about') }}">О блоге</a>
           </div>
           <div class="navbar-nav">
-            <a class="nav-item nav-link" href="/login">Войти</a>
-            <a class="nav-item nav-link" href="/register">Зарегистрироваться</a>
+            <a class="nav-item nav-link" href="{{ url_for('login') }}">Войти</a>
+            <a class="nav-item nav-link" href="{{ url_for('register') }}">Зарегистрироваться</a>
           </div>
         </div>
       </div>
