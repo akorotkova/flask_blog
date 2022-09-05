@@ -59,7 +59,13 @@ def register():
     return render_template('register.html', title='Регистрация', form=registration_form)
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
+    if login_form.validate_on_submit():
+        if login_form.email.data == 'admin@yandex.ru' and login_form.password.data == '1234567890':
+            flash(f'Добро пожаловать!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash(f'Неверный адрес электронной почты или пароль, повторите попытку.', 'danger')
     return render_template('login.html', title='Вход', form=login_form)
