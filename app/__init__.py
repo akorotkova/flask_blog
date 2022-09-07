@@ -1,9 +1,36 @@
+from datetime import datetime
 from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
 import config
 from .forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
 app.config.from_object(config.DevelopmentConfig)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    posts = db.relationship('Post', backref='author', lazy=True)
+
+    def __repr__(self):
+        return f'(User: name - {self.username}, email - {self.email}, image_file - {self.image_file})'
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f'(Post: title - {self.title}, date_posted - {self.date_posted})'
+
 
 posts = [
     {
@@ -67,5 +94,5 @@ def login():
             flash(f'Добро пожаловать!', 'success')
             return redirect(url_for('index'))
         else:
-            flash(f'Неверный адрес электронной почты или пароль, повторите попытку.', 'danger')
+            flash(f'Неверный адрес электронной почты или пароль, повторите попытку', 'danger')
     return render_template('login.html', title='Вход', form=login_form)

@@ -9,6 +9,8 @@ class Config(object):
     SECRET_KEY = environ.get('SECRET_KEY')
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///site.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class DevelopmentConfig(Config):
@@ -21,3 +23,5 @@ class ProductionConfig(Config):
     FLASK_ENV = 'production'
     DEBUG = False
     TESTING = False
+
+# environ.get('DATABASE_URL', 'sqlite:///site.db')
