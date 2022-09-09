@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect
-from . import app
+from . import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from .models import User, Post
 
@@ -51,20 +51,24 @@ def about():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    registration_form = RegistrationForm()
-    if registration_form.validate_on_submit():
-        flash(f'{registration_form.username.data}, Ваша учетная запись создана, добро пожаловать!', 'success')
-        return redirect(url_for('index'))
-    return render_template('register.html', title='Регистрация', form=registration_form)
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash(f'Ваша учетная запись создана, добро пожаловать!', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    login_form = LoginForm()
-    if login_form.validate_on_submit():
-        if login_form.email.data == 'admin@yandex.ru' and login_form.password.data == '1234567890':
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@yandex.ru' and form.password.data == '1234567890':
             flash(f'Добро пожаловать!', 'success')
             return redirect(url_for('index'))
         else:
             flash(f'Неверный адрес электронной почты или пароль, повторите попытку', 'danger')
-    return render_template('login.html', title='Вход', form=login_form)
+    return render_template('login.html', title='Вход', form=form)
