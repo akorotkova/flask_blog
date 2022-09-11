@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from . import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from .models import User, Post
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 
 posts = [
@@ -74,7 +74,8 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('index'))
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash(f'Неверный адрес электронной почты или пароль, повторите попытку', 'danger')
     return render_template('login.html', title='Вход', form=form)
@@ -84,4 +85,9 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-    
+
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html', title='Личный кабинет')
