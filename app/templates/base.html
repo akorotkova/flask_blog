@@ -39,8 +39,12 @@
             <a class="nav-item nav-link" href="{{ url_for('about') }}">О блоге</a>
           </div>
           <div class="navbar-nav">
-            <a class="nav-item nav-link" href="{{ url_for('login') }}">Войти</a>
-            <a class="nav-item nav-link" href="{{ url_for('register') }}">Зарегистрироваться</a>
+            {% if current_user.is_authenticated %}
+              <a class="nav-item nav-link" href="{{ url_for('logout') }}">Выйти</a>
+            {% else %}
+              <a class="nav-item nav-link" href="{{ url_for('login') }}">Войти</a>
+              <a class="nav-item nav-link" href="{{ url_for('register') }}">Зарегистрироваться</a>
+            {% endif %}
           </div>
         </div>
       </div>
