@@ -2,6 +2,7 @@ from flask import render_template, url_for, flash, redirect
 from . import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from .models import User, Post
+from flask_login import login_user, current_user
 
 
 posts = [
@@ -51,6 +52,8 @@ def about():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -64,10 +67,13 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@yandex.ru' and form.password.data == '1234567890':
-            flash(f'Добро пожаловать!', 'success')
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
             return redirect(url_for('index'))
         else:
             flash(f'Неверный адрес электронной почты или пароль, повторите попытку', 'danger')

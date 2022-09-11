@@ -25,8 +25,7 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError('Данный адрес электронной почты уже зарегистрирован. Пожалуйста, укажите другой email')
         
-
-
+        
 class LoginForm(FlaskForm):
     email = StringField('Введите почту', 
                             validators=[DataRequired(), Email()])
