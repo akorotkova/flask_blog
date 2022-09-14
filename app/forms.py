@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError
 from wtforms.validators import DataRequired, Length, Email, EqualTo
+from flask_login import current_user
 from .models import User
 
 
@@ -33,3 +34,24 @@ class LoginForm(FlaskForm):
                             validators=[DataRequired()])
     remember = BooleanField('Запомнить')
     submit = SubmitField('Войти')
+
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Имя', 
+                            validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('email', 
+                            validators=[DataRequired(), Email(message='Неверный формат электронной почты')])
+    submit = SubmitField('Изменить данные')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('Данное имя уже занято. Пожалуйста, укажите другое имя')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('Данный адрес электронной почты уже зарегистрирован. Пожалуйста, укажите другой email')
+        
