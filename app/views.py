@@ -1,5 +1,6 @@
 import os
 import secrets
+from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from . import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm, UpdateAccountForm
@@ -90,11 +91,16 @@ def logout():
 
 
 def save_picture(form_picture):
+
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_filename = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/img', picture_filename)
-    form_picture.save(picture_path)
+
+    output_size_file = (125, 125)
+    result_image = Image.open(form_picture)
+    result_image.thumbnail(output_size_file)
+    result_image.save(picture_path)
 
     return picture_filename
 
