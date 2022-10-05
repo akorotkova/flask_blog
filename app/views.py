@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from . import app, db, bcrypt
-from .forms import RegistrationForm, LoginForm, UpdateAccountForm
+from .forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from .models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -123,3 +123,13 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename='img/' + current_user.image_file)
     return render_template('account.html', title='Личный кабинет', image_file=image_file, form=form)
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        flash('Пост создан', 'success')
+        return redirect(url_for('index'))
+    return render_template('create_post.html', title='Новый пост', form=form)
