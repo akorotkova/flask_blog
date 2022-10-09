@@ -8,43 +8,10 @@ from .models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-posts = [
-    {
-        'author': 'Anastasia',
-        'title': 'Пост №1', 
-        'content': 'Содержание поста №1',
-        'date_posted': 'Сентябрь 1, 2022'
-    }, 
-    {
-        'author': 'Maria',
-        'title': 'Пост №2', 
-        'content': 'Содержание поста №2',
-        'date_posted': 'Сентябрь 2, 2022'
-    }, 
-    {
-        'author': 'Alexander',
-        'title': 'Пост №3', 
-        'content': 'Содержание поста №3',
-        'date_posted': 'Сентябрь 3, 2022'
-    }, 
-    {
-        'author': 'Svetlana',
-        'title': 'Пост №4', 
-        'content': 'Содержание поста №4',
-        'date_posted': 'Сентябрь 4, 2022'
-    }, 
-    {
-        'author': 'Dmitry',
-        'title': 'Пост №5', 
-        'content': 'Содержание поста №5',
-        'date_posted': 'Сентябрь 5, 2022'
-    }
-]
-
-
 @app.route("/")
 @app.route('/index')
 def index():
+    posts = Post.query.all()
     return render_template('index.html', posts=posts, title='Главная')
 
 
@@ -130,6 +97,9 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        flash('Пост создан', 'success')
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Пост успешно создан', 'success')
         return redirect(url_for('index'))
     return render_template('create_post.html', title='Новый пост', form=form)
