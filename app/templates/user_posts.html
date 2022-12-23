@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <h2 class="mb-3">Посты {{ user.username }} ({{ posts.total }})</h2>
   {% for post in posts.items %}
     <article class="media content-section">
       <img class="rounded-circle article-img" src="{{ url_for('static', filename='img/' + post.author.image_file) }}">
@@ -17,9 +18,9 @@
     {% for num_page in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
       {% if num_page %}
         {% if posts.page == num_page %}
-          <a class="btn btn-secondary btn-sm mb-4" href="{{ url_for('index', page=num_page) }}">{{ num_page }}</a>
+          <a class="btn btn-secondary btn-sm mb-4" href="{{ url_for('user_posts', username=user.username, page=num_page) }}">{{ num_page }}</a>
         {% else %}
-          <a class="btn btn-outline-secondary btn-sm mb-4" href="{{ url_for('index', page=num_page) }}">{{ num_page }}</a>
+          <a class="btn btn-outline-secondary btn-sm mb-4" href="{{ url_for('user_posts', username=user.username, page=num_page) }}">{{ num_page }}</a>
         {% endif %}
       {% else %}
         ...
