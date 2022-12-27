@@ -7,12 +7,10 @@ from .models import User
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Введите имя', 
-                            validators=[DataRequired(), Length(min=2, max=20)])
+    username = StringField('Введите имя', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Введите почту', 
                             validators=[DataRequired(), Email(message='Неверный формат электронной почты')])
-    password = PasswordField('Придумайте пароль', 
-                            validators=[DataRequired(), Length(min=8)])
+    password = PasswordField('Придумайте пароль', validators=[DataRequired(), Length(min=8)])
     confirm_password = PasswordField('Подтвердите пароль', 
                             validators=[DataRequired(), EqualTo('password', message='Пароли не совпадают')])
     submit = SubmitField('Отправить')
@@ -29,17 +27,14 @@ class RegistrationForm(FlaskForm):
         
         
 class LoginForm(FlaskForm):
-    email = StringField('Введите почту', 
-                            validators=[DataRequired(), Email()])
-    password = PasswordField('Введите пароль', 
-                            validators=[DataRequired()])
+    email = StringField('Введите почту', validators=[DataRequired(), Email()])
+    password = PasswordField('Введите пароль', validators=[DataRequired()])
     remember = BooleanField('Запомнить')
     submit = SubmitField('Войти')
 
 
 class UpdateAccountForm(FlaskForm):
-    username = StringField('Имя', 
-                            validators=[DataRequired(), Length(min=2, max=20)])
+    username = StringField('Имя', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('email', 
                             validators=[DataRequired(), Email(message='Неверный формат электронной почты')])
     picture = FileField('Изменить фотографию профиля: ', 
@@ -64,3 +59,20 @@ class PostForm(FlaskForm):
     title = StringField('Название поста: ', validators=[DataRequired()])
     content = TextAreaField('Содержание поста: ', validators=[DataRequired()])
     submit = SubmitField('Опубликовать')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('email', validators=[DataRequired(), Email(message='Неверный формат электронной почты')])
+    submit = SubmitField('Запросить сброс пароля')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('Учетной записи с данной электронной почтой нет. Пожалуйста, зарегистрируйтесь')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(min=8)])
+    confirm_password = PasswordField('Подтвердите пароль', 
+                            validators=[DataRequired(), EqualTo('password', message='Пароли не совпадают')])
+    submit = SubmitField('Сброс пароля')
