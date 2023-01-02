@@ -1,6 +1,5 @@
 from datetime import datetime
-from itsdangerous import TimedSerializer
-from . import db, login_manager, app
+from . import db, login_manager
 from flask_login import UserMixin
 
 
@@ -20,19 +19,6 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'(User: name - {self.username}, email - {self.email}, image_file - {self.image_file})'
 
-    def get_reset_token(self): 
-        serializer = TimedSerializer(app.config['SECRET_KEY'])
-        return serializer.dumps({'user_id': self.id})
-
-    @staticmethod
-    def verify_reset_token(token, expires_seconds=1800):
-        serializer = TimedSerializer(app.config['SECRET_KEY'])
-        try:
-            user_id = serializer.loads(token, max_age=expires_seconds)['user_id']
-        except:
-            return None
-        return User.query.get(user_id)
-        
         
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
