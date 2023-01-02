@@ -59,20 +59,3 @@ class PostForm(FlaskForm):
     title = StringField('Название поста: ', validators=[DataRequired()])
     content = TextAreaField('Содержание поста: ', validators=[DataRequired()])
     submit = SubmitField('Опубликовать')
-
-
-class RequestResetForm(FlaskForm):
-    email = StringField('email', validators=[DataRequired(), Email(message='Неверный формат электронной почты')])
-    submit = SubmitField('Запросить сброс пароля')
-
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
-        if user is None:
-            raise ValidationError('Учетной записи с данной электронной почтой нет. Пожалуйста, зарегистрируйтесь')
-
-
-class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Пароль', validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField('Подтвердите пароль', 
-                            validators=[DataRequired(), EqualTo('password', message='Пароли не совпадают')])
-    submit = SubmitField('Сброс пароля')
