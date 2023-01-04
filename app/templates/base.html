@@ -35,17 +35,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarToggle">
           <div class="navbar-nav mr-auto">
-            <a class="nav-item nav-link" href="{{ url_for('index') }}">Главная</a>
-            <a class="nav-item nav-link" href="{{ url_for('about') }}">О блоге</a>
+            <a class="nav-item nav-link" href="{{ url_for('main.index') }}">Главная</a>
+            <a class="nav-item nav-link" href="{{ url_for('main.about') }}">О блоге</a>
           </div>
           <div class="navbar-nav">
             {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('new_post') }}">Создать пост</a>
-              <a class="nav-item nav-link" href="{{ url_for('account') }}">Личный кабинет</a>
-              <a class="nav-item nav-link" href="{{ url_for('logout') }}">Выйти</a>
+              <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">Создать пост</a>
+              <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Личный кабинет</a>
+              <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Выйти</a>
             {% else %}
-              <a class="nav-item nav-link" href="{{ url_for('login') }}">Войти</a>
-              <a class="nav-item nav-link" href="{{ url_for('register') }}">Зарегистрироваться</a>
+              <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Войти</a>
+              <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Зарегистрироваться</a>
             {% endif %}
           </div>
         </div>
