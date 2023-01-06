@@ -25,8 +25,10 @@ def create_app(config_class=Config):
     from .users import users
     from .posts import posts
     from .main import main
+    from .errors import errors
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
 
     return app
