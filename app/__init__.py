@@ -6,7 +6,7 @@ from config import Config
 
 
 db = SQLAlchemy()
-bcrypt = Bcrypt()
+flask_bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message = 'Пожалуйста, войдите в систему, чтобы получить доступ к странице'
@@ -19,7 +19,7 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db.init_app(app)
-    bcrypt.init_app(app)
+    flask_bcrypt.init_app(app)
     login_manager.init_app(app)
 
     from .users import users
