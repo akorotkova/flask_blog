@@ -45,7 +45,7 @@
         {{ form.submit(class="btn btn-outline-secondary") }}
       </div>
       <small class="text-muted">
-        <a href="#">Забыли пароль?</a>         
+        <a href="{{ url_for('users.reset_request') }}">Забыли пароль?</a>         
       </small>
     </form>
   </div>

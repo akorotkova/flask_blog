@@ -1,5 +1,8 @@
+from time import time
+import jwt
 from datetime import datetime
 from . import db, login_manager
+from flask import current_app
 from flask_login import UserMixin
 
 
@@ -16,6 +19,20 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy=True)
 
+    def get_reset_token(self, expires_seconds=600):
+        token = jwt.encode(
+                {'user_id': self.id, 'exp': time() + expires_seconds},
+                  current_app.config['SECRET_KEY'], algorithm='HS256')
+        return token
+    
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            user_id = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+    
     def __repr__(self):
         return f'(User: name - {self.username}, email - {self.email}, image_file - {self.image_file})'
 

@@ -3,8 +3,8 @@ from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 from .. import db, flask_bcrypt
 from ..models import User, Post
-from ..users.forms import RegistrationForm, LoginForm, UpdateAccountForm
-from ..users.utils import save_picture
+from ..users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
+from ..users.utils import save_picture, send_reset_email
 
 
 @users.route('/register', methods=['GET', 'POST'])
@@ -70,3 +70,35 @@ def user_posts(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
+
+
+@users.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_reset_email(user)
+        flash('Инструкция по сбросу пароля отправлена Вам на почту', 'info')
+        return redirect(url_for('users.login'))
+    return render_template('reset_request.html', title='Сброс пароля', form=form)
+
+
+@users.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('Токен не действителен или срок его действия истек', 'warning')
+        return redirect(url_for('users.reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = flask_bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash(f'Ваш пароль успешно обновлен', 'success')
+        return redirect(url_for('users.login'))
+    return render_template('reset_token.html', title='Сброс пароля', form=form)
