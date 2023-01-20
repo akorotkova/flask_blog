@@ -1,3 +1,5 @@
+import logging
+from logging.handlers import SMTPHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -30,5 +32,15 @@ def create_app(config_class=Config):
     app.register_blueprint(posts)
     app.register_blueprint(main)
     app.register_blueprint(errors)
+    
+    if not app.config['DEBUG'] and not app.config['TESTING']:
+
+        mail_handler = SMTPHandler(
+                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
+                fromaddr=app.config['MAIL_USERNAME'],
+                toaddrs=app.config['MAIL_USERNAME'], subject='Application Error',
+                credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD']), secure=())
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
 
     return app
