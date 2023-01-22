@@ -9,9 +9,9 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
   <title>
     {% if title %}
-      Личный блог - {{ title }}
+      Блог - {{ title }}
     {% else %} 
-      Личный блог
+      Блог
     {% endif %}
   </title>
 </head>
@@ -28,7 +28,7 @@
   <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
       <div class="container">
-        <a class="navbar-brand mr-4" href="/">Личный блог</a>
+        <a class="navbar-brand mr-4" href="#">Блог</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" 
                 aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -71,7 +71,7 @@
         <div class="content-section">
           <p class='text-muted'>
             <ul class="list-group">
-              <li class="list-group-item list-group-item-light">Последние собщения</li>
+              <li class="list-group-item list-group-item-light">Последние сообщения</li>
               <li class="list-group-item list-group-item-light">Объявления</li>
               <li class="list-group-item list-group-item-light">Календарь</li>
             </ul>
